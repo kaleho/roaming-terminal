@@ -11,5 +11,5 @@ docker run -it --rm \
   -v ~/.zshrc:/home/user01/.zshrc \
   -v ~/.oh-my-zsh:/home/user01/.oh-my-zsh \
   -v ~/.azure:/home/user01/.azure \
-  devopsterm:latest
+  devops-terminal:latest
 ```
