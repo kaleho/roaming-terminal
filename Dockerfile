@@ -10,7 +10,7 @@ ARG KUBECTX_VERSION="0.9.3"
 ARG KUBENS_VERSION="0.9.3"
 ARG LSDELUXE_VERSION="0.17.0"
 ARG STERN_VERSION="1.11.0"
-ARG TERRAFORM_VERSION="0.15.0"
+ARG TERRAFORM_VERSION="1.0.4"
 ARG TERRAGRUNT_VERSION="0.29.0"
 
 ARG USERNAME=user01
@@ -22,10 +22,14 @@ RUN groupadd --gid $USER_GID $USERNAME \
   && apt update \
   && apt install --yes \
   sudo \
+  gettext libtool libtool-bin autoconf automake cmake g++ pkg-config build-essential \
   ca-certificates \
   curl \
   git \
   openssh-server \
+  python3-pip \
+  nodejs \
+  npm \
   tmux \
   unzip \
   wget \
@@ -71,8 +75,6 @@ RUN \
   && ./helm.sh \
   && rm helm.sh \
   \
-#   && curl -sL https://aka.ms/InstallAzureCLIDeb | bash \
-  \
   && FZF_DOWNLOAD_SHA256="7d4e796bd46bcdea69e79a8f571be1da65ae9d9cc984b50bc4af5c0b5754fbd5" \
   && wget -O fzf.tgz https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz \
   && echo "$FZF_DOWNLOAD_SHA256  fzf.tgz" | sha256sum -c - \
@@ -94,10 +96,6 @@ RUN \
   # && bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) \
   # && curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
 
-# RUN \
-#   bash <(curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim)
-  # curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim | bash
-
 # Install neovim from source
 # RUN \
 #   git clone https://github.com/neovim/neovim && \
@@ -112,6 +110,11 @@ RUN \
   && chmod u+x nvim.appimage \
   && ./nvim.appimage --appimage-extract \
   && ln -s /squashfs-root/AppRun /usr/bin/nvim
+
+RUN \
+  # bash <(curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim)
+  # curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim | bash
+  curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
 
 USER $USERNAME
 
