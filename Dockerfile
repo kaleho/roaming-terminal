@@ -30,6 +30,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
   python3-pip \
   nodejs \
   npm \
+  rsync \
   tmux \
   unzip \
   wget \
