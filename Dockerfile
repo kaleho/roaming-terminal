@@ -22,7 +22,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
   && apt update \
   && apt install --yes \
   sudo \
-  gettext libtool libtool-bin autoconf automake cmake g++ pkg-config build-essential \
+  #gettext libtool libtool-bin autoconf automake cmake g++ pkg-config build-essential apt-transport-https \
+  apt-transport-https \
   ca-certificates \
   curl \
   git \
@@ -37,6 +38,12 @@ RUN groupadd --gid $USER_GID $USERNAME \
   zsh \
   && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
   && chmod 0440 /etc/sudoers.d/$USERNAME
+
+RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+  && sudo dpkg -i packages-microsoft-prod.deb \
+  && rm packages-microsoft-prod.deb \
+  && apt update \
+  && apt install --yes dotnet-sdk-5.0
 
 # Install tools
 RUN \
@@ -87,6 +94,7 @@ RUN \
   && echo "$LSDELUXE_DOWNLOAD_SHA256  lsdeluxe.deb" | sha256sum -c - \
   && dpkg -i lsdeluxe.deb \
   && rm lsdeluxe.deb
+  
 
 # RUN \
 #   add-apt-repository --yes ppa:neovim-ppa/stable \
@@ -112,10 +120,10 @@ RUN \
   && ./nvim.appimage --appimage-extract \
   && ln -s /squashfs-root/AppRun /usr/bin/nvim
 
-RUN \
+#RUN \
   # bash <(curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim)
   # curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim | bash
-  curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
+#  curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
 
 USER $USERNAME
 
