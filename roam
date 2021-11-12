@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [ "$USER_HOME" = '' ]; then
+  echo '$USER_HOME is empty, cannot continue.'
+  exit 1
+fi
+
+echo Using $USER_HOME as home directory...
+
+if [ "$1" = 'init' ]; then
+
+  docker run -it --rm -w ~/ \
+    -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/localtime:/etc/localtime:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $USER_HOME/.roaming-home:/home/user01/.roaming-home \
+    -v $USER_HOME:/home/user01/.local-home \
+    -v $USER_HOME/.kube:/home/user01/.kube-home \
+    -v $USER_HOME/syncs:/home/user01/syncs \
+    -v $USER_HOME/.ssh:/home/user01/.ssh \
+    -v ~/.azure:/home/user01/.azure \
+    roaming-terminal:latest
+
+elif [ "$1" = 'customize' ]; then
+
+  source ~/.local-home/.custom_functions
+
+else
+
+  docker run -it --rm -w ~/ \
+    -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/localtime:/etc/localtime:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $USER_HOME/.roaming-home/.cache:/home/user01/.cache \
+    -v $USER_HOME/.roaming-home/.oh-my-zsh:/home/user01/.oh-my-zsh \
+    -v $USER_HOME/.roaming-home/.p10k.zsh:/home/user01/.p10k.zsh \
+    -v $USER_HOME/.roaming-home/.profile:/home/user01/.profile \
+    -v $USER_HOME/.roaming-home/.zshrc:/home/user01/.zshrc \
+    -v $USER_HOME:/home/user01/.local-home \
+    -v $USER_HOME/.kube:/home/user01/.kube-home \
+    -v $USER_HOME/syncs:/home/user01/syncs \
+    -v $USER_HOME/.ssh:/home/user01/.ssh \
+    -v ~/.azure:/home/user01/.azure \
+    roaming-terminal:latest
+
+fi

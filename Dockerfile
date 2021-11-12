@@ -1,17 +1,17 @@
-FROM ubuntu:latest
+FROM debian:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG DOCKER_COMPOSE_VERSION="1.29.2"
-ARG DOCKER_VERSION="20.10.6"
-ARG FZF_VERSION="0.21.1"
-ARG KUBIE_VERSION="0.14.1"
-ARG KUBECTX_VERSION="0.9.3"
-ARG KUBENS_VERSION="0.9.3"
-ARG LSDELUXE_VERSION="0.17.0"
+ARG DOCKER_COMPOSE_VERSION="2.1.1"
+ARG DOCKER_VERSION="20.10.9"
+ARG FZF_VERSION="0.23.1"
+ARG KUBIE_VERSION="0.15.1"
+ARG KUBECTX_VERSION="0.9.4"
+ARG KUBENS_VERSION="0.9.4"
+ARG LSDELUXE_VERSION="0.20.1"
 ARG STERN_VERSION="1.11.0"
-ARG TERRAFORM_VERSION="1.0.4"
-ARG TERRAGRUNT_VERSION="0.29.0"
+ARG TERRAFORM_VERSION="1.0.11"
+ARG TERRAGRUNT_VERSION="0.35.9"
 
 ARG USERNAME=user01
 ARG USER_UID=1000
@@ -43,7 +43,8 @@ RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-p
   && sudo dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb \
   && apt update \
-  && apt install --yes dotnet-sdk-5.0
+  && apt install --yes dotnet-sdk-5.0 \
+  && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 # Install tools
 RUN \
@@ -51,7 +52,7 @@ RUN \
   && tar zxvf archive.tgz --strip 1 -C /usr/local/bin docker/docker \
   && rm archive.tgz \
   \
-  && wget -q -O /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
+  && wget -q -O /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
   && chmod +x /usr/local/bin/docker-compose \
   \
   && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
@@ -83,15 +84,11 @@ RUN \
   && ./helm.sh \
   && rm helm.sh \
   \
-  && FZF_DOWNLOAD_SHA256="7d4e796bd46bcdea69e79a8f571be1da65ae9d9cc984b50bc4af5c0b5754fbd5" \
   && wget -O fzf.tgz https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz \
-  && echo "$FZF_DOWNLOAD_SHA256  fzf.tgz" | sha256sum -c - \
   && tar zxvf fzf.tgz --directory /usr/local/bin \
   && rm fzf.tgz \
   \
-  && LSDELUXE_DOWNLOAD_SHA256="ac85771d6195ef817c9d14f8a8a0d027461bfc290d46cb57e434af342a327bb2" \
   && wget -O lsdeluxe.deb https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb \
-  && echo "$LSDELUXE_DOWNLOAD_SHA256  lsdeluxe.deb" | sha256sum -c - \
   && dpkg -i lsdeluxe.deb \
   && rm lsdeluxe.deb
   
