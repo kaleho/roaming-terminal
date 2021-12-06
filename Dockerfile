@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:bullseye-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -17,34 +17,62 @@ ARG USERNAME=user01
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN groupadd --gid $USER_GID $USERNAME \
-  && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-  && apt update \
+RUN apt update \
   && apt install --yes \
   sudo \
-  #gettext libtool libtool-bin autoconf automake cmake g++ pkg-config build-essential apt-transport-https \
   apt-transport-https \
   ca-certificates \
   curl \
   git \
+  gnupg \
+  jq \
   openssh-server \
+  postgresql-client \
   python3-pip \
-  nodejs \
-  npm \
   rsync \
   tmux \
   unzip \
   wget \
-  zsh \
-  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-  && chmod 0440 /etc/sudoers.d/$USERNAME
+  zsh
+
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add -
+
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
 
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
   && sudo dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb \
   && apt update \
-  && apt install --yes dotnet-sdk-5.0 \
+  && apt install --yes \
+  libasound2 \
+  libatk1.0-0 \
+  libcairo2 \
+  libcups2 \
+  libexpat1 \
+  libfontconfig1 \
+  libfreetype6 \
+  libgtk2.0-0 \
+  libpango-1.0-0 \
+  libx11-xcb1 \
+  libxcomposite1 \
+  libxcursor1 \
+  libxdamage1 \
+  libxext6 \
+  libxfixes3 \
+  libxi6 \
+  libxrandr2 \
+  libxrender1 \
+  libxss1 \
+  libxtst6 \
+  libxshmfence-dev \
+  code \
+  dotnet-sdk-5.0 \
   && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+RUN groupadd --gid $USER_GID $USERNAME \
+  && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
+  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+  && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Install tools
 RUN \
@@ -93,25 +121,8 @@ RUN \
   && wget -O lsdeluxe.deb https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb \
   && dpkg -i lsdeluxe.deb \
   && rm lsdeluxe.deb
-  
 
-# RUN \
-#   add-apt-repository --yes ppa:neovim-ppa/stable \
-#   && apt update \
-#   && apt install --yes --no-install-recommends \
-#   gettext libtool libtool-bin autoconf automake cmake g++ pkg-config build-essential \
-  # neovim 
-  # && bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) \
-  # && curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
-
-# Install neovim from source
-# RUN \
-#   git clone https://github.com/neovim/neovim && \
-#   cd neovim && \
-#   make CMAKE_BUILD_TYPE=RelWithDebInfo && \
-#   make install && \
-#   cd .. && \
-#   rm -r neovim
+# Install the appimage for nvim
 
 RUN \
   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
@@ -119,12 +130,16 @@ RUN \
   && ./nvim.appimage --appimage-extract \
   && ln -s /squashfs-root/AppRun /usr/bin/nvim
 
+# Install lunarvim
+
 #RUN \
   # bash <(curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim)
   # curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim | bash
 #  curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
 
 USER $USERNAME
+
+# Setup fancy zsh
 
 COPY zsh-in-docker.sh /tmp
 RUN /tmp/zsh-in-docker.sh \
@@ -147,6 +162,14 @@ RUN /tmp/zsh-in-docker.sh \
     -a 'bindkey "\$terminfo[kcuu1]" history-substring-search-up' \
     -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down'
 
+# Prepare the image for pulling down node and npm
+
+RUN \
+  curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
+  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USERNAME/.zshrc && \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USERNAME/.zshrc && \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USERNAME/.zshrc
+  
 # Clean up 
 RUN \  
   sudo apt clean && \
