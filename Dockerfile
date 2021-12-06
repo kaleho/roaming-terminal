@@ -55,6 +55,8 @@ RUN \
   && wget -q -O /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
   && chmod +x /usr/local/bin/docker-compose \
   \
+  && wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash \
+  \
   && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
   && chmod +x /usr/local/bin/kubectl \
   \
