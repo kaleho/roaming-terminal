@@ -1,34 +1,37 @@
+
 #!/bin/bash
 
-if [ "$USER" = '' ]; then
-  echo '$USER is empty, cannot continue.'
+if [ "$HOME" = '' ]; then
+  echo '$HOME is empty, cannot continue.'
   exit 1
 fi
 
-echo Using $USER as home directory...
+echo Using $HOME as home directory...
 
 if [ "$1" = 'init' ]; then
 
   mkdir --parents \
-    /home/$USER/.azure \
-    /home/$USER/.kube \
-    /home/$USER/.roaming-home \
-    /home/$USER/.ssh \
-    /home/$USER/syncs \
-    /home/$USER/working
+    $HOME/.azure \
+	$HOME/.config/nvim \
+    $HOME/.kube \
+    $HOME/.roaming-home \
+    $HOME/.ssh \
+    $HOME/syncs \
+    $HOME/working
 
   docker run -it --rm -w $(pwd) \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /home/$USER:/home/user01/.home \
-    -v /home/$USER/.azure:/home/user01/.azure \
-    -v /home/$USER/.kube:/home/user01/.kube \
-    -v /home/$USER/.roaming-home:/home/user01/.roaming-home \
-    -v /home/$USER/.ssh:/home/user01/.ssh \
-    -v /home/$USER/syncs:/home/user01/syncs \
-    -v /home/$USER/working:/home/user01/working \
-    roaming-terminal:latest
+    -v $HOME:$HOME/.home \
+    -v $HOME/.azure:$HOME/.azure \
+    -v $HOME/.config:$HOME/.config \
+    -v $HOME/.kube:$HOME/.kube \
+    -v $HOME/.roaming-home:$HOME/.roaming-home \
+    -v $HOME/.ssh:$HOME/.ssh \
+    -v $HOME/syncs:$HOME/syncs \
+    -v $HOME/working:$HOME/working \
+    roaming-terminal:$USER
 
 elif [ "$1" = 'customize' ]; then
 
@@ -41,18 +44,20 @@ else
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /mnt/c:/mnt/c \
-    -v /home/$USER:/home/user01/.home \
-    -v /home/$USER/.azure:/home/user01/.azure \
-    -v /home/$USER/.kube:/home/user01/.kube \
-    -v /home/$USER/.roaming-home/.cache:/home/user01/.cache \
-    -v /home/$USER/.roaming-home/.oh-my-zsh:/home/user01/.oh-my-zsh \
-    -v /home/$USER/.roaming-home/.p10k.zsh:/home/user01/.p10k.zsh \
-    -v /home/$USER/.roaming-home/.profile:/home/user01/.profile \
-    -v /home/$USER/.roaming-home/.zsh_history:/home/user01/.zsh_history \
-    -v /home/$USER/.roaming-home/.zshrc:/home/user01/.zshrc \
-    -v /home/$USER/.ssh:/home/user01/.ssh \
-    -v /home/$USER/syncs:/home/user01/syncs \
-    -v /home/$USER/working:/home/user01/working \
-    roaming-terminal:latest
+    -v $HOME:$HOME/.home \
+    -v $HOME/.azure:$HOME/.azure \
+    -v $HOME/.config:$HOME/.config \
+    -v $HOME/.kube:$HOME/.kube \
+    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
+    -v $HOME/.roaming-home/.profile:$HOME/.profile \
+    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
+    -v $HOME/.roaming-home/.cache:$HOME/.cache \
+    -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
+    -v $HOME/.ssh:$HOME/.ssh \
+    -v $HOME/syncs:$HOME/syncs \
+    -v $HOME/working:$HOME/working \
+    roaming-terminal:$USER
 
 fi
+
+

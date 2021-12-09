@@ -13,9 +13,9 @@ ARG STERN_VERSION="1.11.0"
 ARG TERRAFORM_VERSION="1.0.11"
 ARG TERRAGRUNT_VERSION="0.35.9"
 
-ARG USERNAME=user01
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+ARG USER_NAME
+ARG USER_UID
+ARG USER_GID
 
 RUN apt update \
   && apt install --yes \
@@ -26,6 +26,7 @@ RUN apt update \
   git \
   gnupg \
   jq \
+  neovim \
   openssh-server \
   postgresql-client \
   python3-pip \
@@ -37,44 +38,21 @@ RUN apt update \
 
 RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add -
 
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
-
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
   && sudo dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb \
   && apt update \
   && apt install --yes \
-  libasound2 \
-  libatk1.0-0 \
-  libcairo2 \
-  libcups2 \
-  libexpat1 \
-  libfontconfig1 \
-  libfreetype6 \
-  libgtk2.0-0 \
-  libpango-1.0-0 \
-  libx11-xcb1 \
-  libxcomposite1 \
-  libxcursor1 \
-  libxdamage1 \
-  libxext6 \
-  libxfixes3 \
-  libxi6 \
-  libxrandr2 \
-  libxrender1 \
-  libxss1 \
-  libxtst6 \
-  libxshmfence-dev \
-  code \
   dotnet-sdk-5.0 \
   && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-RUN groupadd --gid $USER_GID $USERNAME \
-  && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-  && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN groupadd --gid $USER_GID $USER_NAME \
+  && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME \
+  && echo $USER_NAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER_NAME \
+  && chmod 0440 /etc/sudoers.d/$USER_NAME
 
 # Install tools
+
 RUN \
   wget -q -O archive.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
   && tar zxvf archive.tgz --strip 1 -C /usr/local/bin docker/docker \
@@ -120,24 +98,18 @@ RUN \
   \
   && wget -O lsdeluxe.deb https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb \
   && dpkg -i lsdeluxe.deb \
-  && rm lsdeluxe.deb
+  && rm lsdeluxe.deb \
+  \
+  && wget -O MesloLGS\ NF\ Regular.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
+  && wget -O MesloLGS\ NF\ Bold.ttf http://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
+  && wget -O MesloLGS\ NF\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
+  && wget -O MesloLGS\ NF\ Bold\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf \
+  && mkdir -p /usr/local/share/fonts/MesloLGS\ NF \
+  && mv *.ttf /usr/local/share/fonts/MesloLGS\ NF/
 
-# Install the appimage for nvim
+# Everything past this point is done in the user context
 
-RUN \
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
-  && chmod u+x nvim.appimage \
-  && ./nvim.appimage --appimage-extract \
-  && ln -s /squashfs-root/AppRun /usr/bin/nvim
-
-# Install lunarvim
-
-#RUN \
-  # bash <(curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim)
-  # curl -s https://raw.githubusercontent.com/lunarvim/LunarVim/rolling/utils/bin/install-latest-neovim | bash
-#  curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash
-
-USER $USERNAME
+USER $USER_NAME
 
 # Setup fancy zsh
 
@@ -166,9 +138,9 @@ RUN /tmp/zsh-in-docker.sh \
 
 RUN \
   curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
-  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USERNAME/.zshrc && \
-  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USERNAME/.zshrc && \
-  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USERNAME/.zshrc
+  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER_NAME/.zshrc && \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USER_NAME/.zshrc && \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USER_NAME/.zshrc
   
 # Clean up 
 RUN \  

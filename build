@@ -1,5 +1,9 @@
 #!/bin/bash
 
-docker rmi roaming-terminal:latest
+docker rmi roaming-terminal:$USER
 
-docker build --tag roaming-terminal:latest .
+docker build \
+	--build-arg USER_NAME=$USER \
+	--build-arg USER_GID=$(id -g $USER) \
+	--build-arg USER_UID=$(id -u $USER) \
+	--tag roaming-terminal:$USER .
