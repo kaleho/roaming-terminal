@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 if [ "$HOME" = '' ]; then
@@ -33,11 +32,7 @@ if [ "$1" = 'init' ]; then
     -v $HOME/working:$HOME/working \
     roaming-terminal:$USER
 
-elif [ "$1" = 'customize' ]; then
-
-  source ~/.local-home/.custom_functions
-
-else
+elif [ "$1" = 'transient' ]; then
 
   docker run -it --rm -w $(pwd) \
     -v /etc/timezone:/etc/timezone:ro \
@@ -48,15 +43,34 @@ else
     -v $HOME/.azure:$HOME/.azure \
     -v $HOME/.config:$HOME/.config \
     -v $HOME/.kube:$HOME/.kube \
-    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
-    -v $HOME/.roaming-home/.profile:$HOME/.profile \
-    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.roaming-home/.cache:$HOME/.cache \
     -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
     -v $HOME/.ssh:$HOME/.ssh \
     -v $HOME/syncs:$HOME/syncs \
     -v $HOME/working:$HOME/working \
     roaming-terminal:$USER
+
+elif [ "$1" = 'start' ]; then
+
+  docker run -it --name $USER-terminal \
+    -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/localtime:/etc/localtime:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /mnt/c:/mnt/c \
+    -v $HOME:$HOME/.home \
+    -v $HOME/.azure:$HOME/.azure \
+    -v $HOME/.config:$HOME/.config \
+    -v $HOME/.kube:$HOME/.kube \
+    -v $HOME/.roaming-home/.cache:$HOME/.cache \
+    -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
+    -v $HOME/.ssh:$HOME/.ssh \
+    -v $HOME/syncs:$HOME/syncs \
+    -v $HOME/working:$HOME/working \
+    roaming-terminal:$USER
+
+else
+
+  docker start -a -i $USER-terminal 
 
 fi
 
