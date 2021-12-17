@@ -2,6 +2,7 @@ FROM debian:bullseye-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+ARG DEVSPACE_VERSION="5.18.1"
 ARG DOCKER_COMPOSE_VERSION="2.1.1"
 ARG DOCKER_VERSION="20.10.9"
 ARG FZF_VERSION="0.23.1"
@@ -12,6 +13,7 @@ ARG LSDELUXE_VERSION="0.20.1"
 ARG STERN_VERSION="1.11.0"
 ARG TERRAFORM_VERSION="1.0.11"
 ARG TERRAGRUNT_VERSION="0.35.9"
+ARG VCLUSTER_VERSION="0.4.5"
 
 ARG USER_NAME
 ARG USER_UID
@@ -38,13 +40,14 @@ RUN apt update \
 
 RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add -
 
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-  && sudo dpkg -i packages-microsoft-prod.deb \
-  && rm packages-microsoft-prod.deb \
-  && apt update \
-  && apt install --yes \
-  dotnet-sdk-5.0 \
-  && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+#  wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+#  && sudo dpkg -i packages-microsoft-prod.deb \
+#  && rm packages-microsoft-prod.deb \
+#  && apt update \
+#  && apt install --yes \
+#  dotnet-sdk-5.0 \
+
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 RUN groupadd --gid $USER_GID $USER_NAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME \
@@ -61,7 +64,7 @@ RUN \
   && wget -q -O /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
   && chmod +x /usr/local/bin/docker-compose \
   \
-  && wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash \
+  && wget -q -O - "https://raw.githubusercontent.com/rancher/k3d/main/install.sh" | bash \
   \
   && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
   && chmod +x /usr/local/bin/kubectl \
@@ -87,25 +90,35 @@ RUN \
   && wget -q -O /usr/local/bin/stern "https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64" \
   && chmod +x /usr/local/bin/stern \
   \
-  && wget -q -O helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+  && wget -q -O helm.sh "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3" \
   && chmod +x helm.sh \
   && ./helm.sh \
   && rm helm.sh \
   \
-  && wget -O fzf.tgz https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz \
+  && wget -O fzf.tgz "https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz" \
   && tar zxvf fzf.tgz --directory /usr/local/bin \
   && rm fzf.tgz \
   \
-  && wget -O lsdeluxe.deb https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb \
+  && wget -O lsdeluxe.deb "https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb" \
   && dpkg -i lsdeluxe.deb \
   && rm lsdeluxe.deb \
   \
-  && wget -O MesloLGS\ NF\ Regular.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
-  && wget -O MesloLGS\ NF\ Bold.ttf http://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
-  && wget -O MesloLGS\ NF\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
-  && wget -O MesloLGS\ NF\ Bold\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf \
-  && mkdir -p /usr/local/share/fonts/MesloLGS\ NF \
-  && mv *.ttf /usr/local/share/fonts/MesloLGS\ NF/
+  && wget -O vcluster "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" \
+  && chmod +x vcluster \ 
+  && mv vcluster /usr/local/bin \
+  \
+  && wget -O devspace "https://github.com/loft-sh/devspace/releases/download/v${DEVSPACE_VERSION}/devspace-linux-amd64" \
+  && chmod +x devspace \
+  && install devspace /usr/local/bin
+
+# \
+#  \
+#  && wget -O MesloLGS\ NF\ Regular.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
+#  && wget -O MesloLGS\ NF\ Bold.ttf http://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
+#  && wget -O MesloLGS\ NF\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
+#  && wget -O MesloLGS\ NF\ Bold\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf \
+#  && mkdir -p /usr/local/share/fonts/MesloLGS\ NF \
+#  && mv *.ttf /usr/local/share/fonts/MesloLGS\ NF/
 
 # Everything past this point is done in the user context
 

@@ -7,11 +7,15 @@ fi
 
 echo Using $HOME as home directory...
 
+# Add permissions to the working folder
+
+chmod o=rwx working
+
 if [ "$1" = 'init' ]; then
 
   mkdir --parents \
     $HOME/.azure \
-	$HOME/.config/nvim \
+    $HOME/.config/nvim \
     $HOME/.kube \
     $HOME/.roaming-home \
     $HOME/.ssh \

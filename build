@@ -1,6 +1,8 @@
 #!/bin/bash
 
-docker rmi roaming-terminal:$USER
+docker rm -f $USER-terminal
+
+docker rmi  -f roaming-terminal:$USER
 
 docker build \
 	--build-arg USER_NAME=$USER \
