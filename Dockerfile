@@ -25,10 +25,12 @@ RUN apt update \
   apt-transport-https \
   ca-certificates \
   curl \
+  dnsutils \
   git \
   gnupg \
   jq \
   neovim \
+  net-tools \
   openssh-server \
   postgresql-client \
   python3-pip \
