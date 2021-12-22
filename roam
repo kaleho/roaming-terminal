@@ -9,7 +9,6 @@ echo Using $HOME as home directory...
 
 # Add permissions to the working folder
 
-chmod o=rwx working
 
 if [ "$1" = 'init' ]; then
 
@@ -21,6 +20,8 @@ if [ "$1" = 'init' ]; then
     $HOME/.ssh \
     $HOME/syncs \
     $HOME/working
+
+  chmod o=rwx $HOME/working
 
   docker run -it --rm -w $(pwd) \
     -v /etc/timezone:/etc/timezone:ro \
