@@ -21,6 +21,8 @@ if [ "$1" = 'init' ]; then
     $HOME/syncs \
     $HOME/working
 
+  mkfifo $HOME/.roaming-pipe
+
   chmod o=rwx $HOME/working
 
   echo 'Run "p10k configure" to alter zsh prompt settings'
@@ -63,11 +65,16 @@ elif [ "$1" = 'start' ]; then
 
 elif [ "$1" = 'resume' ]; then
 
-  docker start -a -i $USER-terminal 
+  docker start -a -i $USER-terminal
 
 else
 
+  while true; do eval "$(cat $HOME/.roaming-pipe)"; done &
+
+  LOOP_PID=$!
+
   docker run -it --rm -w $(pwd) \
+    -v $HOME/.roaming-pipe:$HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -86,7 +93,6 @@ else
     -v $HOME/working:$HOME/working \
     roaming-terminal:$USER
 
+  kill $LOOP_PID
+
 fi
-
-
-
