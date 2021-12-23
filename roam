@@ -9,7 +9,6 @@ echo Using $HOME as home directory...
 
 # Add permissions to the working folder
 
-
 if [ "$1" = 'init' ]; then
 
   mkdir --parents \
@@ -17,13 +16,7 @@ if [ "$1" = 'init' ]; then
     $HOME/.config/nvim \
     $HOME/.kube \
     $HOME/.roaming-home \
-    $HOME/.ssh \
-    $HOME/syncs \
-    $HOME/working
-
-  mkfifo $HOME/.roaming-pipe
-
-  chmod o=rwx $HOME/working
+    $HOME/.ssh
 
   echo 'Run "p10k configure" to alter zsh prompt settings'
   echo 'Run "cp -r .cache .oh-my-zsh .p10k.zsh .profile .zshrc .roaming-home" to persist those settings for subsequent runs'
@@ -38,43 +31,27 @@ if [ "$1" = 'init' ]; then
     -v $HOME/.kube:$HOME/.kube \
     -v $HOME/.roaming-home:$HOME/.roaming-home \
     -v $HOME/.ssh:$HOME/.ssh \
-    -v $HOME/syncs:$HOME/syncs \
-    -v $HOME/working:$HOME/working \
     roaming-terminal:$USER
-
-elif [ "$1" = 'start' ]; then
-
-  docker run -it --name $USER-terminal \
-    -v /etc/timezone:/etc/timezone:ro \
-    -v /etc/localtime:/etc/localtime:ro \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /mnt/c:/mnt/c \
-    -v $HOME:$HOME/.home \
-    -v $HOME/.azure:$HOME/.azure \
-    -v $HOME/.config:$HOME/.config \
-    -v $HOME/.kube:$HOME/.kube \
-    -v $HOME/.roaming-home/.cache:$HOME/.cache \
-    -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
-    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
-    -v $HOME/.roaming-home/.profile:$HOME/.profile \
-    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
-    -v $HOME/.ssh:$HOME/.ssh \
-    -v $HOME/syncs:$HOME/syncs \
-    -v $HOME/working:$HOME/working \
-    roaming-terminal:$USER
-
-elif [ "$1" = 'resume' ]; then
-
-  docker start -a -i $USER-terminal
 
 else
 
-  while true; do eval "$(cat $HOME/.roaming-pipe)"; done &
+  VOLUMES=""
+
+  for d in $HOME/*/
+    do VOLUMES+=" -v ${d%*/}:${d%*/}"
+  done
+
+  PIPE_ID=$RANDOM
+  PIPE_PATH=$HOME/.roaming-pipe-$RANDOM
+
+  mkfifo $PIPE_PATH
+
+  while true; do eval "$(cat $PIPE_PATH)"; done &
 
   LOOP_PID=$!
 
-  docker run -it --rm -w $(pwd) \
-    -v $HOME/.roaming-pipe:$HOME/.roaming-pipe \
+  eval "docker run -it --rm -w $(pwd) \
+    -v $PIPE_PATH:$HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -89,10 +66,11 @@ else
     -v $HOME/.roaming-home/.profile:$HOME/.profile \
     -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.ssh:$HOME/.ssh \
-    -v $HOME/syncs:$HOME/syncs \
-    -v $HOME/working:$HOME/working \
-    roaming-terminal:$USER
+    $VOLUMES \
+    roaming-terminal:$USER"
 
   kill $LOOP_PID
+
+  rm $PIPE_PATH
 
 fi
