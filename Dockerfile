@@ -42,21 +42,12 @@ RUN apt update \
 
 RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add -
 
-#  wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-#  && sudo dpkg -i packages-microsoft-prod.deb \
-#  && rm packages-microsoft-prod.deb \
-#  && apt update \
-#  && apt install --yes \
-#  dotnet-sdk-5.0 \
-
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 RUN groupadd --gid $USER_GID $USER_NAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME \
   && echo $USER_NAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER_NAME \
   && chmod 0440 /etc/sudoers.d/$USER_NAME
-
-# Install tools
 
 RUN \
   wget -q -O archive.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
@@ -113,21 +104,13 @@ RUN \
   && chmod +x devspace \
   && install devspace /usr/local/bin
 
-# \
-#  \
-#  && wget -O MesloLGS\ NF\ Regular.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
-#  && wget -O MesloLGS\ NF\ Bold.ttf http://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
-#  && wget -O MesloLGS\ NF\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
-#  && wget -O MesloLGS\ NF\ Bold\ Italic.ttf https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf \
-#  && mkdir -p /usr/local/share/fonts/MesloLGS\ NF \
-#  && mv *.ttf /usr/local/share/fonts/MesloLGS\ NF/
+COPY remote /usr/bin
+COPY code /usr/bin
 
 # Everything past this point is done in the user context
-
 USER $USER_NAME
 
 # Setup fancy zsh
-
 COPY zsh-in-docker.sh /tmp
 RUN /tmp/zsh-in-docker.sh \
     -p git \

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+shopt -s extglob
+
+COMMAND="code "
+
+for i in "$@"; do
+  COMMAND+="$(realpath $i) "
+done
+
+COMMAND="${COMMAND%%*( )}"
+
+if [ "$COMMAND" != "" ]; then
+  echo "$COMMAND" > $HOME/.roaming-pipe
+fi
+
+shopt -u extglob

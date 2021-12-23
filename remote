@@ -1,0 +1,24 @@
+#!/bin/bash
+
+shopt -s extglob
+
+COMMAND=""
+
+for i in "$@"; do
+  if [[ "$i" =~ ^\..* ]]; then
+    COMMAND+="$(realpath $i) "
+  else
+    COMMAND+="$i "
+  fi
+done
+
+COMMAND="${COMMAND%%*( )}"
+
+if [ "$COMMAND" != "" ]; then
+  echo "Remotely executing: [$COMMAND]"
+  echo "$COMMAND" > $HOME/.roaming-pipe
+else
+  echo "Nothing to run"
+fi
+
+shopt -u extglob
