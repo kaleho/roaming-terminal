@@ -23,6 +23,9 @@ if [ "$1" = 'init' ]; then
 
   chmod o=rwx $HOME/working
 
+  echo 'Run "p10k configure" to alter zsh prompt settings'
+  echo 'Run "cp -r .cache .oh-my-zsh .p10k.zsh .profile .zshrc .roaming-home" to persist those settings for subsequent runs'
+
   docker run -it --rm -w $(pwd) \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
@@ -50,6 +53,9 @@ elif [ "$1" = 'transient' ]; then
     -v $HOME/.kube:$HOME/.kube \
     -v $HOME/.roaming-home/.cache:$HOME/.cache \
     -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
+    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
+    -v $HOME/.roaming-home/.profile:$HOME/.profile \
+    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.ssh:$HOME/.ssh \
     -v $HOME/syncs:$HOME/syncs \
     -v $HOME/working:$HOME/working \
@@ -68,6 +74,9 @@ elif [ "$1" = 'start' ]; then
     -v $HOME/.kube:$HOME/.kube \
     -v $HOME/.roaming-home/.cache:$HOME/.cache \
     -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
+    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
+    -v $HOME/.roaming-home/.profile:$HOME/.profile \
+    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.ssh:$HOME/.ssh \
     -v $HOME/syncs:$HOME/syncs \
     -v $HOME/working:$HOME/working \
@@ -78,5 +87,6 @@ else
   docker start -a -i $USER-terminal 
 
 fi
+
 
 
