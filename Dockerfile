@@ -28,6 +28,8 @@ RUN apt update \
   dnsutils \
   git \
   gnupg \
+  inetutils-traceroute \
+  iputils-ping \
   jq \
   neovim \
   net-tools \
