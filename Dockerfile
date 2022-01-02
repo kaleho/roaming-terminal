@@ -49,7 +49,9 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 RUN groupadd --gid $USER_GID $USER_NAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME \
   && echo $USER_NAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER_NAME \
-  && chmod 0440 /etc/sudoers.d/$USER_NAME
+  && chmod 0440 /etc/sudoers.d/$USER_NAME \
+  && groupadd docker \
+  && usermod -aG docker $USER_NAME
 
 RUN \
   wget -q -O archive.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
@@ -141,7 +143,16 @@ RUN \
   echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER_NAME/.zshrc && \
   echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USER_NAME/.zshrc && \
   echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USER_NAME/.zshrc
-  
+
+# Add custom aliases
+
+RUN \
+  echo 'alias k=kubectl' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
+  echo 'alias tf=terraform' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
+  echo 'alias tg=terragrunt' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
+  echo 'alias vim=nvim' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh
+
+
 # Clean up 
 RUN \  
   sudo apt clean && \
