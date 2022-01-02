@@ -152,7 +152,6 @@ RUN \
   echo 'alias tg=terragrunt' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
   echo 'alias vim=nvim' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh
 
-
 # Clean up 
 RUN \  
   sudo apt clean && \
