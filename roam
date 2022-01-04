@@ -7,7 +7,27 @@ fi
 
 echo Using $HOME as home directory...
 
-# Add permissions to the working folder
+# Gather all folders in the home directory to mount as volumes
+
+VOLUMES=""
+
+for d in $HOME/*/
+  do VOLUMES+=" -v ${d%*/}:${d%*/}"
+done
+
+# Create a pipe for sending commands back to the host using `remote`
+
+PIPE_ID=$RANDOM
+PIPE_PATH=$HOME/.roaming-pipe-$RANDOM
+
+mkfifo $PIPE_PATH
+
+while true; do eval "$(cat $PIPE_PATH)"; done &
+
+LOOP_PID=$!
+
+echo "Using roaming pipe: $PIPE_PATH"
+echo "Running with additional args: [$1]"
 
 if [ "$1" = 'init' ]; then
 
@@ -21,7 +41,7 @@ if [ "$1" = 'init' ]; then
   echo 'Run "p10k configure" to alter zsh prompt settings'
   echo 'Run "cp -r .cache .oh-my-zsh .p10k.zsh .profile .zshrc .roaming-home" to persist those settings for subsequent runs'
 
-  docker run -it --rm -w $(pwd) \
+  eval "docker run -it --rm -w $(pwd) \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -31,24 +51,11 @@ if [ "$1" = 'init' ]; then
     -v $HOME/.kube:$HOME/.kube \
     -v $HOME/.roaming-home:$HOME/.roaming-home \
     -v $HOME/.ssh:$HOME/.ssh \
-    roaming-terminal:$USER
+    $VOLUMES \
+    $1 \
+    roaming-terminal:$USER"
 
 else
-
-  VOLUMES=""
-
-  for d in $HOME/*/
-    do VOLUMES+=" -v ${d%*/}:${d%*/}"
-  done
-
-  PIPE_ID=$RANDOM
-  PIPE_PATH=$HOME/.roaming-pipe-$RANDOM
-
-  mkfifo $PIPE_PATH
-
-  while true; do eval "$(cat $PIPE_PATH)"; done &
-
-  LOOP_PID=$!
 
   eval "docker run -it --rm -w $(pwd) \
     -v $PIPE_PATH:$HOME/.roaming-pipe \
@@ -67,10 +74,11 @@ else
     -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.ssh:$HOME/.ssh \
     $VOLUMES \
+    $1 \
     roaming-terminal:$USER"
 
-  kill $LOOP_PID
-
-  rm $PIPE_PATH
-
 fi
+
+kill $LOOP_PID
+
+rm $PIPE_PATH
