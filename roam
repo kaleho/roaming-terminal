@@ -52,7 +52,7 @@ if [ "$1" = 'init' ]; then
     -v $HOME/.roaming-home:$HOME/.roaming-home \
     -v $HOME/.ssh:$HOME/.ssh \
     $VOLUMES \
-    $1 \
+    $2 \
     roaming-terminal:$USER"
 
 else
