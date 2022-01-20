@@ -145,10 +145,21 @@ RUN /tmp/zsh-in-docker.sh \
 # Prepare the image for pulling down node and npm
 
 RUN \
-  curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
-  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER_NAME/.zshrc && \
-  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USER_NAME/.zshrc && \
-  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USER_NAME/.zshrc
+  curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
+  && \
+  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER_NAME/.zshrc \
+  && \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USER_NAME/.zshrc \
+  && \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USER_NAME/.zshrc \
+  && \
+  export NVM_DIR="/home/$USER_NAME/.nvm" \
+  && \
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+  && \
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
+  && \
+  nvm install --lts --latest-npm
 
 # Add custom aliases
 
