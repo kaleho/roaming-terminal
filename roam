@@ -12,7 +12,9 @@ echo Using $HOME as home directory...
 VOLUMES=""
 
 for d in $HOME/*/
-  do VOLUMES+=" -v ${d%*/}:${d%*/}"
+  do 
+    dir=${d%*/}
+    VOLUMES+=" -v ${d%*/}:/home/$USER/${dir##*/}"
 done
 
 # Create a pipe for sending commands back to the host using `remote`
@@ -35,6 +37,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   USER_MAP="--user 1000"
 fi
 
+PWD=$(pwd)
+MYHOME=$HOME
+CONTHOME=/home/$USER
+WORK_DIR=${PWD/$MYHOME/$CONTHOME}
+
+echo Using $WORK_DIR as working directory
+
 if [ "$1" = 'init' ]; then
 
   mkdir -p \
@@ -47,7 +56,7 @@ if [ "$1" = 'init' ]; then
   echo 'Run "p10k configure" to alter zsh prompt settings'
   echo 'Run "cp -r .cache .oh-my-zsh .p10k.zsh .profile .zshrc .roaming-home" to persist those settings for subsequent runs'
 
-  eval "docker run -it --rm -w $(pwd) \
+  eval "docker run -it --rm -w $WORK_DIR \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -62,9 +71,11 @@ if [ "$1" = 'init' ]; then
     $2 \
     roaming-terminal:$USER"
 
+  exit
+
 else
 
-  eval "docker run -it --rm -w $(pwd) \
+  eval "docker run -it --rm -w $WORK_DIR \
     -v $PIPE_PATH:/home/$USER/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
