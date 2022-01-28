@@ -51,12 +51,12 @@ if [ "$1" = 'init' ]; then
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $HOME:$HOME/.home \
-    -v $HOME/.azure:$HOME/.azure \
-    -v $HOME/.config:$HOME/.config \
-    -v $HOME/.kube:$HOME/.kube \
-    -v $HOME/.roaming-home:$HOME/.roaming-home \
-    -v $HOME/.ssh:$HOME/.ssh \
+    -v $HOME:/home/$USER/.home \
+    -v $HOME/.azure:/home/$USER/.azure \
+    -v $HOME/.config:/home/$USER/.config \
+    -v $HOME/.kube:/home/$USER/.kube \
+    -v $HOME/.roaming-home:/home/$USER/.roaming-home \
+    -v $HOME/.ssh:/home/$USER/.ssh \
     $VOLUMES \
     $USER_MAP \
     $2 \
@@ -65,20 +65,20 @@ if [ "$1" = 'init' ]; then
 else
 
   eval "docker run -it --rm -w $(pwd) \
-    -v $PIPE_PATH:$HOME/.roaming-pipe \
+    -v $PIPE_PATH:/home/$USER/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $HOME:$HOME/.home \
-    -v $HOME/.azure:$HOME/.azure \
-    -v $HOME/.config:$HOME/.config \
-    -v $HOME/.kube:$HOME/.kube \
-    -v $HOME/.roaming-home/.cache:$HOME/.cache \
-    -v $HOME/.roaming-home/.oh-my-zsh:$HOME/.oh-my-zsh \
-    -v $HOME/.roaming-home/.p10k.zsh:$HOME/.p10k.zsh \
-    -v $HOME/.roaming-home/.profile:$HOME/.profile \
-    -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
-    -v $HOME/.ssh:$HOME/.ssh \
+    -v $HOME:/home/$USER/.home \
+    -v $HOME/.azure:/home/$USER/.azure \
+    -v $HOME/.config:/home/$USER/.config \
+    -v $HOME/.kube:/home/$USER/.kube \
+    -v $HOME/.roaming-home/.cache:/home/$USER/.cache \
+    -v $HOME/.roaming-home/.oh-my-zsh:/home/$USER/.oh-my-zsh \
+    -v $HOME/.roaming-home/.p10k.zsh:/home/$USER/.p10k.zsh \
+    -v $HOME/.roaming-home/.profile:/home/$USER/.profile \
+    -v $HOME/.roaming-home/.zshrc:/home/$USER/.zshrc \
+    -v $HOME/.ssh:/home/$USER/.ssh \
     $VOLUMES \
     $USER_MAP \
     $1 \
