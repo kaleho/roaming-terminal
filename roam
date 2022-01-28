@@ -29,9 +29,15 @@ LOOP_PID=$!
 echo "Using roaming pipe: $PIPE_PATH"
 echo "Running with additional args: [$1]"
 
+USER_MAP=""
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  USER_MAP="--user 1000"
+fi
+
 if [ "$1" = 'init' ]; then
 
-  mkdir --parents \
+  mkdir -p \
     $HOME/.azure \
     $HOME/.config/nvim \
     $HOME/.kube \
@@ -52,6 +58,7 @@ if [ "$1" = 'init' ]; then
     -v $HOME/.roaming-home:$HOME/.roaming-home \
     -v $HOME/.ssh:$HOME/.ssh \
     $VOLUMES \
+    $USER_MAP \
     $2 \
     roaming-terminal:$USER"
 
@@ -62,7 +69,6 @@ else
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /mnt/c:/mnt/c \
     -v $HOME:$HOME/.home \
     -v $HOME/.azure:$HOME/.azure \
     -v $HOME/.config:$HOME/.config \
@@ -74,6 +80,7 @@ else
     -v $HOME/.roaming-home/.zshrc:$HOME/.zshrc \
     -v $HOME/.ssh:$HOME/.ssh \
     $VOLUMES \
+    $USER_MAP \
     $1 \
     roaming-terminal:$USER"
 

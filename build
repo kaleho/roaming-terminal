@@ -1,9 +1,17 @@
 #!/bin/bash
 
-docker rmi  -f roaming-terminal:$USER
+USER_GID=$(id -g $USER)
+USER_UID=$(id -u $USER)
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  USER_GID=1000
+  USER_UID=1000
+fi
+
+#docker rmi  -f roaming-terminal:$USER
 
 docker build \
-	--build-arg USER_NAME=$USER \
-	--build-arg USER_GID=$(id -g $USER) \
-	--build-arg USER_UID=$(id -u $USER) \
-	--tag roaming-terminal:$USER .
+  --build-arg USER_NAME=$USER \
+  --build-arg USER_GID=$USER_GID \
+  --build-arg USER_UID=$USER_UID \
+  --tag roaming-terminal:$USER .
