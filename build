@@ -8,7 +8,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   USER_UID=1000
 fi
 
-#docker rmi  -f roaming-terminal:$USER
+docker rmi  -f roaming-terminal:$USER
 
 docker build \
   --build-arg USER_NAME=$USER \

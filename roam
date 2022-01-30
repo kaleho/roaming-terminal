@@ -7,6 +7,10 @@ fi
 
 echo Using $HOME as home directory...
 
+PWD=$(pwd)
+CONTAINER_HOME=/home/$USER
+WORK_DIR=${PWD/$HOME/$CONTAINER_HOME}
+
 # Gather all folders in the home directory to mount as volumes
 
 VOLUMES=""
@@ -14,7 +18,7 @@ VOLUMES=""
 for d in $HOME/*/
   do 
     dir=${d%*/}
-    VOLUMES+=" -v ${d%*/}:/home/$USER/${dir##*/}"
+    VOLUMES+=" -v ${d%*/}:$CONTAINER_HOME/${dir##*/}"
 done
 
 # Create a pipe for sending commands back to the host using `remote`
@@ -37,11 +41,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   USER_MAP="--user 1000"
 fi
 
-PWD=$(pwd)
-MYHOME=$HOME
-CONTHOME=/home/$USER
-WORK_DIR=${PWD/$MYHOME/$CONTHOME}
-
 echo Using $WORK_DIR as working directory
 
 if [ "$1" = 'init' ]; then
@@ -60,12 +59,12 @@ if [ "$1" = 'init' ]; then
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $HOME:/home/$USER/.home \
-    -v $HOME/.azure:/home/$USER/.azure \
-    -v $HOME/.config:/home/$USER/.config \
-    -v $HOME/.kube:/home/$USER/.kube \
-    -v $HOME/.roaming-home:/home/$USER/.roaming-home \
-    -v $HOME/.ssh:/home/$USER/.ssh \
+    -v $HOME:$CONTAINER_HOME/.home \
+    -v $HOME/.azure:$CONTAINER_HOME/.azure \
+    -v $HOME/.config:$CONTAINER_HOME/.config \
+    -v $HOME/.kube:$CONTAINER_HOME/.kube \
+    -v $HOME/.roaming-home:$CONTAINER_HOME/.roaming-home \
+    -v $HOME/.ssh:$CONTAINER_HOME/.ssh \
     $VOLUMES \
     $USER_MAP \
     $2 \
@@ -76,20 +75,20 @@ if [ "$1" = 'init' ]; then
 else
 
   eval "docker run -it --rm -w $WORK_DIR \
-    -v $PIPE_PATH:/home/$USER/.roaming-pipe \
+    -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $HOME:/home/$USER/.home \
-    -v $HOME/.azure:/home/$USER/.azure \
-    -v $HOME/.config:/home/$USER/.config \
-    -v $HOME/.kube:/home/$USER/.kube \
-    -v $HOME/.roaming-home/.cache:/home/$USER/.cache \
-    -v $HOME/.roaming-home/.oh-my-zsh:/home/$USER/.oh-my-zsh \
-    -v $HOME/.roaming-home/.p10k.zsh:/home/$USER/.p10k.zsh \
-    -v $HOME/.roaming-home/.profile:/home/$USER/.profile \
-    -v $HOME/.roaming-home/.zshrc:/home/$USER/.zshrc \
-    -v $HOME/.ssh:/home/$USER/.ssh \
+    -v $HOME:$CONTAINER_HOME/.home \
+    -v $HOME/.azure:$CONTAINER_HOME/.azure \
+    -v $HOME/.config:$CONTAINER_HOME/.config \
+    -v $HOME/.kube:$CONTAINER_HOME/.kube \
+    -v $HOME/.roaming-home/.cache:$CONTAINER_HOME/.cache \
+    -v $HOME/.roaming-home/.oh-my-zsh:$CONTAINER_HOME/.oh-my-zsh \
+    -v $HOME/.roaming-home/.p10k.zsh:$CONTAINER_HOME/.p10k.zsh \
+    -v $HOME/.roaming-home/.profile:$CONTAINER_HOME/.profile \
+    -v $HOME/.roaming-home/.zshrc:$CONTAINER_HOME/.zshrc \
+    -v $HOME/.ssh:$CONTAINER_HOME/.ssh \
     $VOLUMES \
     $USER_MAP \
     $1 \
