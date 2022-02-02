@@ -69,6 +69,9 @@ RUN \
   \
   && wget -q -O - "https://raw.githubusercontent.com/rancher/k3d/main/install.sh" | bash \
   \
+  && curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash \
+  && mv kustomize /usr/local/bin \
+  \
   && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
   && chmod +x /usr/local/bin/kubectl \
   \
