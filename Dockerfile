@@ -115,7 +115,14 @@ RUN \
   \
   && wget -O devspace "https://github.com/loft-sh/devspace/releases/download/v${DEVSPACE_VERSION}/devspace-linux-amd64" \
   && chmod +x devspace \
-  && install devspace /usr/local/bin
+  && install devspace /usr/local/bin \
+  \
+  && wget -O f.sh https://sh.rustup.rs \
+  && chmod +x f.sh \
+  && ./f.sh -y \
+  && rm f.sh \
+  \
+  && wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash
 
 COPY remote /usr/bin
 COPY code /usr/bin
