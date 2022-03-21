@@ -22,6 +22,7 @@ ARG USER_GID
 RUN apt update; \
   apt install --yes \
   sudo \
+  apt-utils \
   apt-transport-https \
   ca-certificates \
   curl \
@@ -31,6 +32,7 @@ RUN apt update; \
   inetutils-traceroute \
   iputils-ping \
   jq \
+  locales \
   neovim \
   net-tools \
   openssh-server \
@@ -58,6 +60,10 @@ RUN groupadd --gid $USER_GID $USER_NAME \
   && chmod 0440 /etc/sudoers.d/$USER_NAME \
   && groupadd docker \
   && usermod -aG docker $USER_NAME
+
+COPY remote /usr/bin
+COPY code /usr/bin
+COPY zsh-in-docker.sh /tmp
 
 RUN \
   wget -q -O archive.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
@@ -124,16 +130,12 @@ RUN \
   \
   && wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash
 
-COPY remote /usr/bin
-COPY code /usr/bin
-
 # Everything past this point is done in the user context
 USER $USER_NAME
 
 # Setup fancy zsh
-COPY zsh-in-docker.sh /tmp
-RUN /tmp/zsh-in-docker.sh \
-    -p git \
+RUN tmp/zsh-in-docker.sh \
+    -p git \ 
     -p colored-man-pages \
     -p colorize \
     -p command-not-found \
@@ -153,7 +155,6 @@ RUN /tmp/zsh-in-docker.sh \
     -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down'
 
 # Prepare the image for pulling down node and npm
-
 RUN \
   curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
   && \
@@ -171,18 +172,14 @@ RUN \
   && \
   nvm install --lts --latest-npm
 
-# Add custom aliases
-
-RUN \
-  echo 'alias k=kubectl' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
-  echo 'alias tf=terraform' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
-  echo 'alias tg=terragrunt' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh \
-  echo 'alias vim=nvim' >> /home/$USER_NAME/.oh-my-zsh/custom/aliases.zsh
+USER root
 
 # Clean up 
 RUN \  
-  sudo apt clean && \
-  sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* *.deb
+  apt clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* *.deb
+
+USER $USER_NAME
 
 ENTRYPOINT [ "/bin/zsh" ]
 CMD ["-l"]
