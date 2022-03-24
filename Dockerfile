@@ -75,6 +75,8 @@ RUN \
   \
   && wget -q -O - "https://raw.githubusercontent.com/rancher/k3d/main/install.sh" | bash \
   \
+  && curl -sLS "https://get.k3sup.dev" | sh \
+  \
   && curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash \
   && mv kustomize /usr/local/bin \
   \
@@ -140,7 +142,7 @@ RUN tmp/zsh-in-docker.sh \
     -p colorize \
     -p command-not-found \
     -p cp \
-    -p copydir \
+    -p copypath \
     -p copyfile \
     -p dirhistory \
     -p extract \
