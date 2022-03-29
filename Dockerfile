@@ -163,7 +163,7 @@ RUN tmp/zsh-in-docker.sh \
   export SHELL=/bin/zsh
 
 # Installers that are contextual to the user
-WORKDIR /home/$USER_NAME/tmp
+WORKDIR /home/$USER_NAME
 RUN \
   curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
   && \
