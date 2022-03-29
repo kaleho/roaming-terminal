@@ -48,9 +48,13 @@ RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod
   && dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb
 
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
 RUN apt update; \
   apt install -y \
-  dotnet-sdk-6.0
+  dotnet-sdk-6.0 \
+  gh
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
@@ -130,7 +134,7 @@ RUN \
   && ./f.sh -y \
   && rm f.sh \
   \
-  && wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash
+  && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
 
 # Everything past this point is done in the user context
 USER $USER_NAME
@@ -154,9 +158,12 @@ RUN tmp/zsh-in-docker.sh \
     -p https://github.com/zsh-users/zsh-syntax-highlighting \
     -p 'history-substring-search' \
     -a 'bindkey "\$terminfo[kcuu1]" history-substring-search-up' \
-    -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down'
+    -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down' \
+  && \
+  export SHELL=/bin/zsh
 
-# Prepare the image for pulling down node and npm
+# Installers that are contextual to the user
+WORKDIR /home/$USER_NAME/tmp
 RUN \
   curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
   && \
@@ -172,7 +179,11 @@ RUN \
   && \
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
   && \
-  nvm install --lts --latest-npm
+  nvm install --lts --latest-npm \
+  && \
+  curl -fsSL "https://get.pulumi.com" | sh \
+  && \
+  echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER_NAME/.zshrc
 
 USER root
 
