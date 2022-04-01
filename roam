@@ -33,7 +33,6 @@ while true; do eval "$(cat $PIPE_PATH)"; done &
 LOOP_PID=$!
 
 echo "Using roaming pipe: $PIPE_PATH"
-echo "Running with additional args: [$1]"
 
 USER_MAP=""
 
@@ -43,7 +42,19 @@ fi
 
 echo Using $WORK_DIR as working directory
 
-if [ "$1" = 'init' ]; then
+NAME=$2
+
+if [[ -z "$NAME" ]]; then
+  NAME=$USER\_dev
+fi
+
+EXISTS=no
+
+if [[ `docker ps -a | grep "$NAME"` ]]; then 
+  EXISTS=yes
+fi
+
+if [[ "$1" = 'init' ]]; then
 
   mkdir -p \
     $HOME/.azure \
@@ -71,6 +82,40 @@ if [ "$1" = 'init' ]; then
     roaming-terminal:$USER"
 
   exit
+
+elif [[ "$1" = 'start' ]]; then
+
+  if [[ "$EXISTS" = 'yes' ]]; then 
+    eval "docker start -i $NAME"
+  else
+    eval "docker run -it -w $WORK_DIR \
+      --name $NAME \
+      -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
+      -v /etc/timezone:/etc/timezone:ro \
+      -v /etc/localtime:/etc/localtime:ro \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v $HOME:$CONTAINER_HOME/.home \
+      -v $HOME/.azure:$CONTAINER_HOME/.azure \
+      -v $HOME/.config:$CONTAINER_HOME/.config \
+      -v $HOME/.kube:$CONTAINER_HOME/.kube \
+      -v $HOME/.roaming-home/.cache:$CONTAINER_HOME/.cache \
+      -v $HOME/.roaming-home/.oh-my-zsh:$CONTAINER_HOME/.oh-my-zsh \
+      -v $HOME/.roaming-home/.p10k.zsh:$CONTAINER_HOME/.p10k.zsh \
+      -v $HOME/.roaming-home/.profile:$CONTAINER_HOME/.profile \
+      -v $HOME/.roaming-home/.zshrc:$CONTAINER_HOME/.zshrc \
+      -v $HOME/.ssh:$CONTAINER_HOME/.ssh \
+      $VOLUMES \
+      $USER_MAP \
+      roaming-terminal:$USER"
+  fi
+
+  exit
+
+elif [[ "$1" = 'stop' ]]; then
+
+  if [[ "$EXISTS" = 'yes' ]]; then 
+    eval "docker rm -f $NAME"
+  fi
 
 else
 
