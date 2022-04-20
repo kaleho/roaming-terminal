@@ -68,6 +68,7 @@ RUN groupadd --gid $USER_GID $USER_NAME \
 COPY remote /usr/bin
 COPY code /usr/bin
 COPY zsh-in-docker.sh /tmp
+COPY download-vs-code-server.sh /tmp
 
 RUN \
   wget -q -O archive.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
@@ -140,7 +141,7 @@ RUN \
 USER $USER_NAME
 
 # Setup fancy zsh
-RUN tmp/zsh-in-docker.sh \
+RUN /tmp/zsh-in-docker.sh \
     -p git \ 
     -p colored-man-pages \
     -p colorize \
@@ -184,6 +185,8 @@ RUN \
   curl -fsSL "https://get.pulumi.com" | sh \
   && \
   echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER_NAME/.zshrc
+
+RUN /tmp/download-vs-code-server.sh 
 
 USER root
 
