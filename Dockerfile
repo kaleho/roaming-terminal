@@ -1,6 +1,7 @@
 FROM debian:bullseye-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NONINTERACTIVE_SEEN=true	
 
 ARG DEVSPACE_VERSION="5.18.1"
 ARG DOCKER_COMPOSE_VERSION="2.1.1"
@@ -184,7 +185,16 @@ RUN \
   && \
   curl -fsSL "https://get.pulumi.com" | sh \
   && \
-  echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER_NAME/.zshrc
+  echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER_NAME/.zshrc \
+  \
+  && mkdir krew \
+  && cd krew \
+  && wget -q -O archive.tar.gz "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/').tar.gz" \
+  && tar zxvf archive.tar.gz \
+  && ./"krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" install krew \
+  && cd .. \
+  && rm -r -f krew \
+  echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc
 
 RUN /tmp/download-vs-code-server.sh 
 
