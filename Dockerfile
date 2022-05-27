@@ -45,7 +45,7 @@ RUN apt update; \
   wget \
   zsh
 
-RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+RUN wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb
 
@@ -86,7 +86,7 @@ RUN \
   && curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash \
   && mv kustomize /usr/local/bin \
   \
-  && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
+  && wget -q -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(wget -q https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
   && chmod +x /usr/local/bin/kubectl \
   \
   && wget -q -O archive.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" \
@@ -115,28 +115,30 @@ RUN \
   && ./helm.sh \
   && rm helm.sh \
   \
-  && wget -O fzf.tgz "https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz" \
+  && wget -q -O fzf.tgz "https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz" \
   && tar zxvf fzf.tgz --directory /usr/local/bin \
   && rm fzf.tgz \
   \
-  && wget -O lsdeluxe.deb "https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb" \
+  && wget -q -O lsdeluxe.deb "https://github.com/Peltoche/lsd/releases/download/${LSDELUXE_VERSION}/lsd_${LSDELUXE_VERSION}_amd64.deb" \
   && dpkg -i lsdeluxe.deb \
   && rm lsdeluxe.deb \
   \
-  && wget -O vcluster "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" \
-  && chmod +x vcluster \ 
-  && mv vcluster /usr/local/bin \
+  && wget -q -O /usr/local/bin/vcluster "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" \
+  && chmod +x /usr/local/bin/vcluster \ 
   \
-  && wget -O devspace "https://github.com/loft-sh/devspace/releases/download/v${DEVSPACE_VERSION}/devspace-linux-amd64" \
+  && wget -q -O devspace "https://github.com/loft-sh/devspace/releases/download/v${DEVSPACE_VERSION}/devspace-linux-amd64" \
   && chmod +x devspace \
   && install devspace /usr/local/bin \
   \
-  && wget -O f.sh https://sh.rustup.rs \
+  && wget -q -O f.sh https://sh.rustup.rs \
   && chmod +x f.sh \
   && ./f.sh -y \
   && rm f.sh \
   \
-  && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
+  && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash \ 
+  \
+  && wget -q -O /usr/local/bin/liqoctl "https://get.liqo.io/liqoctl-$(uname | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" \
+  && chmod +x /usr/local/bin/liqoctl
 
 # Everything past this point is done in the user context
 USER $USER_NAME
@@ -194,7 +196,7 @@ RUN \
   && ./"krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" install krew \
   && cd .. \
   && rm -r -f krew \
-  echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc
+  && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc
 
 RUN /tmp/download-vs-code-server.sh 
 
