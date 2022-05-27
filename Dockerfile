@@ -196,7 +196,10 @@ RUN \
   && ./"krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" install krew \
   && cd .. \
   && rm -r -f krew \
-  && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc
+  && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc \
+  \
+  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl \
+  && liqoctl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_liqoctl
 
 RUN /tmp/download-vs-code-server.sh 
 
