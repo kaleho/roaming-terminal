@@ -8,6 +8,7 @@ ARG DOCKER_VERSION="20.10.9"
 ARG FZF_VERSION="0.23.1"
 ARG KUBIE_VERSION="0.15.1"
 ARG KUBECTX_VERSION="0.9.4"
+ARG KUBELOGIN_VERSION="0.0.22" # Last updated: 2022-11-16
 ARG KUBENS_VERSION="0.9.4"
 ARG LSDELUXE_VERSION="0.20.1"
 ARG STERN_VERSION="1.11.0"
@@ -128,6 +129,10 @@ RUN \
   && wget -O devspace "https://github.com/loft-sh/devspace/releases/download/v${DEVSPACE_VERSION}/devspace-linux-amd64" \
   && chmod +x devspace \
   && install devspace /usr/local/bin \
+  \
+  && wget -q -O archive.zip "https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-amd64.zip" \
+  && unzip archive.zip -d /usr/local/bin \
+  && rm archive.zip \
   \
   && wget -O f.sh https://sh.rustup.rs \
   && chmod +x f.sh \
