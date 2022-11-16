@@ -8,7 +8,8 @@ ARG DOCKER_VERSION="20.10.9"
 ARG FZF_VERSION="0.23.1"
 ARG KUBIE_VERSION="0.15.1"
 ARG KUBECTX_VERSION="0.9.4"
-ARG KUBELOGIN_VERSION="0.0.22" # Last updated: 2022-11-16
+# Last updated: 2022-11-16
+ARG KUBELOGIN_VERSION="0.0.22"
 ARG KUBENS_VERSION="0.9.4"
 ARG LSDELUXE_VERSION="0.20.1"
 ARG STERN_VERSION="1.11.0"
@@ -106,9 +107,9 @@ RUN \
   && tar zxvf archive.tgz --directory /usr/local/bin \
   && rm archive.tgz \
   \
-  && wget -q -O /usr/local/bin/stern "https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64" \
-  && chmod +x /usr/local/bin/stern \
-  \
+#  && wget -q -O /usr/local/bin/stern "https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64" \
+#  && chmod +x /usr/local/bin/stern \
+#  \
   && wget -q -O helm.sh "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3" \
   && chmod +x helm.sh \
   && ./helm.sh \
@@ -131,7 +132,7 @@ RUN \
   && install devspace /usr/local/bin \
   \
   && wget -q -O archive.zip "https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-amd64.zip" \
-  && unzip archive.zip -d /usr/local/bin \
+  && unzip -j archive.zip -d /usr/local/bin \
   && rm archive.zip \
   \
   && wget -O f.sh https://sh.rustup.rs \
@@ -140,6 +141,8 @@ RUN \
   && rm f.sh \
   \
   && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
+
+
 
 # Everything past this point is done in the user context
 USER $USER_NAME
