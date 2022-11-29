@@ -9,6 +9,8 @@ ARG DOCKER_VERSION="20.10.9"
 ARG FZF_VERSION="0.23.1"
 ARG KUBIE_VERSION="0.15.1"
 ARG KUBECTX_VERSION="0.9.4"
+# Last updated: 2022-11-16
+ARG KUBELOGIN_VERSION="0.0.22"
 ARG KUBENS_VERSION="0.9.4"
 ARG LSDELUXE_VERSION="0.20.1"
 ARG STERN_VERSION="1.11.0"
@@ -135,10 +137,15 @@ RUN \
   && ./f.sh -y \
   && rm f.sh \
   \
-  && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash \ 
+  && wget -q -O archive.zip "https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-amd64.zip" \
+  && unzip -j archive.zip -d /usr/local/bin \
+  && rm archive.zip \
   \
-  && wget -q -O /usr/local/bin/liqoctl "https://get.liqo.io/liqoctl-$(uname | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" \
-  && chmod +x /usr/local/bin/liqoctl
+  && wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
+  #\ 
+  #\
+  #&& wget -q -O /usr/local/bin/liqoctl "https://get.liqo.io/liqoctl-$(uname | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" \
+  #&& chmod +x /usr/local/bin/liqoctl
 
 # Everything past this point is done in the user context
 USER $USER_NAME
@@ -198,10 +205,11 @@ RUN \
   && rm -r -f krew \
   && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc \
   \
-  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl \
-  && liqoctl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_liqoctl
+  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl 
+  #\
+  #&& liqoctl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_liqoctl
 
-RUN /tmp/download-vs-code-server.sh 
+#RUN /tmp/download-vs-code-server.sh 
 
 USER root
 
