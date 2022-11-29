@@ -107,9 +107,9 @@ RUN \
   && tar zxvf archive.tgz --directory /usr/local/bin \
   && rm archive.tgz \
   \
-  && wget -q -O /usr/local/bin/stern "https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64" \
-  && chmod +x /usr/local/bin/stern \
-  \
+  #&& wget -q -O /usr/local/bin/stern "https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64" \
+  #&& chmod +x /usr/local/bin/stern \
+  #\
   && wget -q -O helm.sh "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3" \
   && chmod +x helm.sh \
   && ./helm.sh \
