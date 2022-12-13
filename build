@@ -14,4 +14,5 @@ docker build \
   --build-arg USER_NAME=$USER \
   --build-arg USER_GID=$USER_GID \
   --build-arg USER_UID=$USER_UID \
+  --build-arg GH_TOKEN=$GH_TOKEN \
   --tag roaming-terminal:$USER .
