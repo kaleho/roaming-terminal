@@ -111,10 +111,14 @@ github_install "/usr/local/bin/docker-compose" "docker/compose" "^docker-compose
 github_install "/usr/local/bin/kubectx" "ahmetb/kubectx" "^kubectx$"
 github_install "/usr/local/bin/kubens" "ahmetb/kubectx" "^kubens$"
 github_install "/usr/local/bin/kubie" "sbstp/kubie" "^kubie-linux-$ARCH$"
+github_install "/usr/local/bin/rke" "rancher/rke" "^rke_linux-$ARCH$"
 github_install "/usr/local/bin/terragrunt" "gruntwork-io/terragrunt" "^terragrunt_linux_$ARCH$"
 github_install "/usr/local/bin/vcluster" "loft-sh/vcluster" "^vcluster-linux-$ARCH$"
+
 github_install_tar "/usr/local/bin" "junegunn/fzf-bin" $(echo "$(uname -s | sed 's/[A-Z]/\L&/g')_$ARCH.tgz$")
+
 github_install_zip "/usr/local/bin" "Azure/kubelogin" "kubelogin-linux-$ARCH.zip$"
+
 github_install_deb "Peltoche/lsd" "^lsd_([0-9.]*)_$ARCH.deb$"
 
 wget -q -O /usr/local/bin/kubectl \
