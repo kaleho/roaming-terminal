@@ -8,10 +8,10 @@ ARG USER_NAME
 ARG USER_UID
 ARG USER_GID
 
-COPY code /usr/bin
-COPY install_libraries.sh /tmp
-COPY remote /usr/bin
-COPY zsh-in-docker.sh /tmp
+COPY code /usr/bin/
+COPY install_libraries*.sh /tmp/
+COPY remote /usr/bin/
+COPY zsh-in-docker.sh /tmp/
 
 RUN groupadd --gid $USER_GID $USER_NAME; \
   useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME; \
@@ -20,7 +20,7 @@ RUN groupadd --gid $USER_GID $USER_NAME; \
   groupadd docker; \
   usermod -aG docker $USER_NAME
 
-RUN /tmp/install_libraries.sh
+RUN /tmp/install_libraries_root.sh
 
 # Everything past this point is done in the user context
 USER $USER_NAME
@@ -50,45 +50,7 @@ RUN /tmp/zsh-in-docker.sh \
 
 # Installers that are contextual to the user
 WORKDIR /home/$USER_NAME
-RUN \
-  curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
-  && \
-  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER_NAME/.zshrc \
-  && \
-  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/$USER_NAME/.zshrc \
-  && \
-  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /home/$USER_NAME/.zshrc \
-  && \
-  export NVM_DIR="/home/$USER_NAME/.nvm" \
-  && \
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-  && \
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
-  && \
-  nvm install --lts --latest-npm \
-  && \
-  curl -fsSL "https://get.pulumi.com" | sh \
-  && \
-  echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER_NAME/.zshrc \
-  \
-  && mkdir krew \
-  && cd krew \
-  && wget -q -O archive.tar.gz "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/').tar.gz" \
-  && tar zxvf archive.tar.gz \
-  && ./"krew-$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" install krew \
-  && cd .. \
-  && rm -r -f krew \
-  && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc \
-  \
-  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl \
-  \
-  && wget -q -O f.sh https://sh.rustup.rs \
-  && chmod +x f.sh \
-  && ./f.sh -y \
-  && rm f.sh \
-  && echo "export PATH=\$PATH:\$HOME/.cargo/bin" >> /home/$USER_NAME/.zshrc 
-  #\
-  #&& liqoctl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_liqoctl
+RUN USER=$USER_NAME /tmp/install_libraries_user.sh
 
 #RUN /tmp/download-vs-code-server.sh 
 
