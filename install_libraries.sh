@@ -139,12 +139,12 @@ wget -q -O helm.sh "https://raw.githubusercontent.com/helm/helm/master/scripts/g
   && ./helm.sh \
   && rm helm.sh
 
-wget -q -O f.sh https://sh.rustup.rs \
-  && chmod +x f.sh \
-  && ./f.sh -y \
-  && rm f.sh
-
-wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
+#wget -q -O f.sh https://sh.rustup.rs \
+#  && chmod +x f.sh \
+#  && ./f.sh -y \
+#  && rm f.sh
+#
+#wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash 
 
 # #\ 
 # #\

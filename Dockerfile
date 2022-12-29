@@ -80,7 +80,13 @@ RUN \
   && rm -r -f krew \
   && echo "export PATH=\"\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH\"" >> /home/$USER_NAME/.zshrc \
   \
-  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl 
+  && kubectl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_kubectl \
+  \
+  && wget -q -O f.sh https://sh.rustup.rs \
+  && chmod +x f.sh \
+  && ./f.sh -y \
+  && rm f.sh \
+  && echo "export PATH=\$PATH:\$HOME/.cargo/bin" >> /home/$USER_NAME/.zshrc 
   #\
   #&& liqoctl completion zsh > /home/$USER_NAME/.oh-my-zsh/plugins/history-substring-search/_liqoctl
 
