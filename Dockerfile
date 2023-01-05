@@ -13,14 +13,14 @@ COPY install_libraries*.sh /tmp/
 COPY remote /usr/bin/
 COPY zsh-in-docker.sh /tmp/
 
+RUN /tmp/install_libraries_root.sh
+
 RUN groupadd --gid $USER_GID $USER_NAME; \
   useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME; \
   echo $USER_NAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER_NAME; \
   chmod 0440 /etc/sudoers.d/$USER_NAME; \
   groupadd docker; \
   usermod -aG docker $USER_NAME
-
-RUN /tmp/install_libraries_root.sh
 
 # Everything past this point is done in the user context
 USER $USER_NAME
