@@ -86,6 +86,10 @@ apt update; \
   wget \
   zsh
 
+# Fix for warning message: bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+locale-gen && update-locale LANG=en_US.UTF-8
+
 wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && rm packages-microsoft-prod.deb
