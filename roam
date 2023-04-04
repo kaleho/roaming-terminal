@@ -120,6 +120,7 @@ elif [[ "$1" = 'stop' ]]; then
 else
 
   eval "docker run -it --rm -w $WORK_DIR \
+    --name $NAME \
     -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \

@@ -86,6 +86,9 @@ apt update; \
   wget \
   zsh
 
+# Install dependencies for Playwright
+sudo apt-get install -y libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libgbm-dev libgtk-3-0 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libasound2 libatspi2.0-0 libxshmfence1 libcups2 libdrm2 libpango-1.0-0 libcairo2
+
 # Fix for warning message: bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
 echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen && update-locale LANG=en_US.UTF-8
@@ -120,6 +123,7 @@ github_install "/usr/local/bin/terragrunt" "gruntwork-io/terragrunt" "^terragrun
 github_install "/usr/local/bin/vcluster" "loft-sh/vcluster" "^vcluster-linux-$ARCH$"
 
 github_install_tar "/usr/local/bin" "junegunn/fzf-bin" $(echo "$(uname -s | sed 's/[A-Z]/\L&/g')_$ARCH.tgz$")
+github_install_tar "/usr/local/bin" "arttor/helmify" $(echo "Linux_64-bit.tar.gz$")
 
 github_install_zip "/usr/local/bin" "Azure/kubelogin" "kubelogin-linux-$ARCH.zip$"
 
