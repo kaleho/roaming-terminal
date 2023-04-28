@@ -36,6 +36,13 @@ echo "export PATH=\$PATH:\$HOME/.cargo/bin" >> /home/$USER/.zshrc
 
 wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash
 
+echo "# Setup path for Go" >> /home/$USER/.zshrc
+echo "export GOROOT=/home/\$USER/.go" >> /home/$USER/.zshrc
+echo "export PATH=\$GOROOT/bin:\$PATH" >> /home/$USER/.zshrc
+echo "export GOPATH=/home/\$USER/go" >> /home/$USER/.zshrc
+echo "export PATH=\$GOPATH/bin:\$PATH" >> /home/$USER/.zshrc
+
+
 # wget -q -O /usr/local/bin/liqoctl "https://get.liqo.io/liqoctl-$(uname | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 # chmod +x /usr/local/bin/liqoctl
 #liqoctl completion zsh > /home/$USER/.oh-my-zsh/plugins/history-substring-search/_liqoctl
