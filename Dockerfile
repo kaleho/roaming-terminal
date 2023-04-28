@@ -13,6 +13,10 @@ COPY install_libraries*.sh /tmp/
 COPY remote /usr/bin/
 COPY zsh-in-docker.sh /tmp/
 
+# Import and merge any local CA certificates
+RUN mkdir -p /usr/local/share/ca-certificates
+COPY ca-certificates/* /usr/local/share/ca-certificates/
+
 RUN /tmp/install_libraries_root.sh
 
 RUN groupadd --gid $USER_GID $USER_NAME; \

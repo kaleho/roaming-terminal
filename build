@@ -8,6 +8,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   USER_UID=1000
 fi
 
+# Copy any local certificates into the image
+mkdir -p ca-certificates
+cp /usr/local/share/ca-certificates/* ca-certificates/
+
 docker rmi -f roaming-terminal:$USER
  
 docker build \

@@ -86,6 +86,9 @@ apt update; \
   wget \
   zsh
 
+# Update the CA certificates for any that were imported into the container
+update-ca-certificates
+
 # Install dependencies for Playwright
 sudo apt-get install -y libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libgbm-dev libgtk-3-0 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libasound2 libatspi2.0-0 libxshmfence1 libcups2 libdrm2 libpango-1.0-0 libcairo2
 
@@ -121,6 +124,7 @@ github_install "/usr/local/bin/kubie" "sbstp/kubie" "^kubie-linux-$ARCH$"
 github_install "/usr/local/bin/rke" "rancher/rke" "^rke_linux-$ARCH$"
 github_install "/usr/local/bin/terragrunt" "gruntwork-io/terragrunt" "^terragrunt_linux_$ARCH$"
 github_install "/usr/local/bin/vcluster" "loft-sh/vcluster" "^vcluster-linux-$ARCH$"
+github_install "/usr/local/bin/yq" "mikefarah/yq" "^yq_linux_$ARCH$"
 
 github_install_tar "/usr/local/bin" "junegunn/fzf-bin" $(echo "$(uname -s | sed 's/[A-Z]/\L&/g')_$ARCH.tgz$")
 github_install_tar "/usr/local/bin" "arttor/helmify" $(echo "Linux_64-bit.tar.gz$")
