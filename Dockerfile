@@ -9,13 +9,15 @@ ARG USER_UID
 ARG USER_GID
 
 COPY code /usr/bin/
-COPY install_libraries*.sh /tmp/
+COPY install*.sh /tmp/
 COPY remote /usr/bin/
 COPY zsh-in-docker.sh /tmp/
 
 # Import and merge any local CA certificates
 RUN mkdir -p /usr/local/share/ca-certificates
 COPY ca-certificates/* /usr/local/share/ca-certificates/
+
+RUN /tmp/install_packages_root.sh
 
 RUN /tmp/install_libraries_root.sh
 
