@@ -14,8 +14,8 @@ COPY remote /usr/bin/
 COPY zsh-in-docker.sh /tmp/
 
 # Import and merge any local CA certificates
-RUN mkdir -p /usr/local/share/ca-certificates
-COPY ca-certificates/* /usr/local/share/ca-certificates/
+#RUN mkdir -p /usr/local/share/ca-certificates
+#COPY ca-certificates/* /usr/local/share/ca-certificates/
 
 RUN /tmp/install_packages_root.sh
 
