@@ -72,6 +72,7 @@ github_install "/usr/local/bin/yq" "mikefarah/yq" "^yq_linux_$ARCH$"
 
 github_install_tar "/usr/local/bin" "arttor/helmify" $(echo "Linux_x86_64.tar.gz$")
 github_install_tar "/usr/local/bin" "junegunn/fzf-bin" $(echo "linux_$ARCH.tgz$")
+github_install_tar "/usr/local/bin" "gohugoio/hugo" $(echo "hugo_extended_.*_linux-$ARCH.tar.gz$")
 
 github_install_zip "/usr/local/bin" "Azure/kubelogin" "kubelogin-linux-$ARCH.zip$"
 
