@@ -60,3 +60,6 @@ apt update; \
   dotnet-sdk-7.0 \
   gh \
   terraform
+
+# Install wasm-tools for .NET
+dotnet workload install wasm-tools

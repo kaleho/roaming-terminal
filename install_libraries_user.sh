@@ -13,6 +13,7 @@ export NVM_DIR="/home/$USER/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 nvm install --lts --latest-npm
+npm install --global lite-server
 
 curl -fsSL "https://get.pulumi.com" | sh
 echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER/.zshrc
@@ -32,7 +33,8 @@ wget -q -O f.sh https://sh.rustup.rs
 chmod +x f.sh
 ./f.sh -y
 rm f.sh
-echo "export PATH=\$PATH:\$HOME/.cargo/bin" >> /home/$USER/.zshrc 
+echo "export PATH=\$PATH:\$HOME/.cargo/bin" >> /home/$USER/.zshrc
+export PATH=$PATH:$HOME/.cargo/bin
 
 wget -q -O - "https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh" | bash
 
@@ -46,3 +48,15 @@ echo "export PATH=\$GOPATH/bin:\$PATH" >> /home/$USER/.zshrc
 # wget -q -O /usr/local/bin/liqoctl "https://get.liqo.io/liqoctl-$(uname | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 # chmod +x /usr/local/bin/liqoctl
 #liqoctl completion zsh > /home/$USER/.oh-my-zsh/plugins/history-substring-search/_liqoctl
+
+# install wasm32 target for rust
+rustup target add wasm32-unknown-unknown
+
+# install cloudflare worker cli, wrangler
+npm install -g @cloudflare/wrangler
+
+# install wasmtime
+curl https://wasmtime.dev/install.sh -sSf | bash
+
+# install lite-server
+npm install -g lite-server
