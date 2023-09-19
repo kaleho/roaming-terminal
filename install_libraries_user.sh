@@ -52,6 +52,9 @@ echo "export PATH=\$GOPATH/bin:\$PATH" >> /home/$USER/.zshrc
 # install wasm32 target for rust
 rustup target add wasm32-unknown-unknown
 
+# install cargo-watch 
+cargo install cargo-watch
+
 # install cloudflare worker cli, wrangler
 npm install -g @cloudflare/wrangler
 
