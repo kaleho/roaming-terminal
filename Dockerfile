@@ -1,17 +1,8 @@
-FROM debian:bookworm-slim
-
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NONINTERACTIVE_SEEN=true	
 
-ARG GH_TOKEN
-ARG USER_NAME
-ARG USER_UID
-ARG USER_GID
-
-COPY code /usr/bin/
+FROM debian:bookworm-slim as base
 COPY install*.sh /tmp/
-COPY remote /usr/bin/
-COPY zsh-in-docker.sh /tmp/
 
 # Import and merge any local CA certificates
 #RUN mkdir -p /usr/local/share/ca-certificates
@@ -19,10 +10,28 @@ COPY zsh-in-docker.sh /tmp/
 
 RUN /tmp/install_packages_root.sh
 
+FROM base as libraries_root
+
+ARG GH_TOKEN
+
+COPY install*.sh /tmp/
+
 RUN /tmp/install_libraries_root.sh
 
+FROM libraries_root as libraries_user
+
+ARG USER_NAME
+ARG USER_UID
+ARG USER_GID
+
+COPY install*.sh /tmp/
+
+COPY code /usr/bin/
+COPY remote /usr/bin/
+COPY zsh-in-docker.sh /tmp/
+
 RUN groupadd --gid $USER_GID $USER_NAME; \
-  useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USER_NAME; \
+  useradd -s /bin/zsh --uid $USER_UID --gid $USER_GID -m $USER_NAME; \
   echo $USER_NAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER_NAME; \
   chmod 0440 /etc/sudoers.d/$USER_NAME; \
   groupadd docker; \

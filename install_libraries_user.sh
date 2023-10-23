@@ -4,6 +4,14 @@ set -e
 
 DEBUG_LEVEL=0
 
+git clone https://github.com/neovim/neovim
+cd neovim
+git checkout stable
+#rm -r build/  # clear the CMake cache
+make CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/neovim"
+make install
+echo "export PATH=\$HOME/neovim/bin:\$PATH" >> /home/$USER/.zshrc
+
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 
 echo 'export NVM_DIR="$HOME/.nvm"' >> /home/$USER/.zshrc
@@ -14,6 +22,7 @@ export NVM_DIR="/home/$USER/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 nvm install --lts --latest-npm
 npm install --global lite-server
+npm install --global @pnpm/exe
 
 curl -fsSL "https://get.pulumi.com" | sh
 echo "export PATH=\$PATH:\$HOME/.pulumi/bin" >> /home/$USER/.zshrc
@@ -56,10 +65,10 @@ rustup target add wasm32-unknown-unknown
 cargo install cargo-watch
 
 # install cloudflare worker cli, wrangler
-npm install -g @cloudflare/wrangler
+npm install --global @cloudflare/wrangler
 
 # install wasmtime
 curl https://wasmtime.dev/install.sh -sSf | bash
 
 # install lite-server
-npm install -g lite-server
+npm install --global lite-server

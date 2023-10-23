@@ -11,9 +11,11 @@ apt update; \
     apt-utils \
     build-essential \
     ca-certificates \
+    cmake \
     curl \
     dnsutils \
     fuse \
+    gettext \
     git \
     gnupg \
     inetutils-traceroute \
@@ -24,6 +26,7 @@ apt update; \
     lsb-release \
     neovim \
     net-tools \
+    ninja-build \
     openssh-server \
     pkg-config \
     postgresql-client \

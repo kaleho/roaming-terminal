@@ -76,7 +76,6 @@ github_install_tar "/usr/local/bin" "junegunn/fzf-bin" $(echo "linux_$ARCH.tgz$"
 
 github_install_zip "/usr/local/bin" "Azure/kubelogin" "kubelogin-linux-$ARCH.zip$"
 
-# Lock the version to 0.23.1 because the upgrade beyond that to 1.0.0 breaks 
 github_install_deb "lsd-rs/lsd" "^lsd_([0-9.]*)_$ARCH.deb$"
 
 #curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
@@ -89,13 +88,13 @@ github_install_deb "lsd-rs/lsd" "^lsd_([0-9.]*)_$ARCH.deb$"
 #sudo ln -s /squashfs-root/AppRun /usr/bin/nvim
 #nvim
 
-URL=$(gh release view --repo neovim/neovim --json assets --jq '.assets.[] | select(.name|test("nvim-linux64\\.tar\\.gz$")) | .url'); \
-    wget -q -O archive.tgz ${URL} \
-    && mkdir -p /tmp/archive \
-    && tar xzvf archive.tgz --directory /tmp/archive nvim-linux64/bin/nvim \
-    && mv /tmp/archive/nvim-linux64/bin/nvim /usr/local/bin/ \
-    && rm archive.tgz \
-    && rm -r /tmp/archive
+#URL=$(gh release view --repo neovim/neovim --json assets --jq '.assets.[] | select(.name|test("nvim-linux64\\.tar\\.gz$")) | .url'); \
+#    wget -q -O archive.tgz ${URL} \
+#    && mkdir -p /tmp/archive \
+#    && tar xzvf archive.tgz --directory /tmp/archive nvim-linux64/bin/nvim \
+#    && mv /tmp/archive/nvim-linux64/bin/nvim /usr/local/bin/ \
+#    && rm archive.tgz \
+#    && rm -r /tmp/archive
 
 wget -q -O /usr/local/bin/kubectl \
     "https://storage.googleapis.com/kubernetes-release/release/$(wget -q https://storage.googleapis.com/kubernetes-release/release/stable.txt -q -O -)/bin/linux/amd64/kubectl" \
