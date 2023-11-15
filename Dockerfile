@@ -2,7 +2,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NONINTERACTIVE_SEEN=true	
 
 FROM debian:bookworm-slim as base
-COPY install*.sh /tmp/
+COPY install_packages_root.sh /tmp/
 
 # Import and merge any local CA certificates
 #RUN mkdir -p /usr/local/share/ca-certificates
@@ -14,7 +14,7 @@ FROM base as libraries_root
 
 ARG GH_TOKEN
 
-COPY install*.sh /tmp/
+COPY install_libraries_root.sh /tmp/
 
 RUN /tmp/install_libraries_root.sh
 
@@ -24,7 +24,7 @@ ARG USER_NAME
 ARG USER_UID
 ARG USER_GID
 
-COPY install*.sh /tmp/
+COPY install_libraries_user.sh /tmp/
 
 COPY code /usr/bin/
 COPY remote /usr/bin/

@@ -69,9 +69,16 @@ update-ca-certificates
 echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen && update-locale LANG=en_US.UTF-8
 
-wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-    && dpkg -i packages-microsoft-prod.deb \
-    && rm packages-microsoft-prod.deb
+# Convert to a float
+OS_NAME=$(lsb_release -is)
+OS_RELEASE_MAJOR=$(lsb_release -rs | awk '{print substr($0,0,4)+0}')
+
+# If this is running on Ubuntu and OS_RELEASE_MAJOR is less than 22, skip this step
+if [ "$OS_NAME" == "Ubuntu" ] && [ $OS_RELEASE_MAJOR -lt 22 ]; then
+    wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+        && dpkg -i packages-microsoft-prod.deb \
+        && rm packages-microsoft-prod.deb
+fi
 
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
@@ -82,12 +89,18 @@ curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | dd of=/usr/s
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | dd of=/usr/share/keyrings/docker-archive-keyring.gpg \
     && echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(lsb_release -is | sed 's/[A-Z]/\L&/g') $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list > /dev/null
+
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc > /dev/null
+
 apt update; \
     apt install -y \
     docker-ce-cli \
     dotnet-sdk-6.0 \
     dotnet-sdk-7.0 \
+    dotnet-sdk-8.0 \
     gh \
+    google-cloud-cli \
     terraform
 
 # Install wasm-tools for .NET
