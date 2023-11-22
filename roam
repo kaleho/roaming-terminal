@@ -126,7 +126,7 @@ else
 
   echo "Volumes being mapped: " $VOLUMES
 
-  eval "docker run -it --rm -w $WORK_DIR \
+  eval "docker run -it -w $WORK_DIR \
     --name $NAME \
     -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
