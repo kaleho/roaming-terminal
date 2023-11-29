@@ -8,10 +8,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   USER_UID=1000
 fi
 
+# Copy any local certificates into the image
+mkdir -p ca-certificates
+cp /usr/local/share/ca-certificates/* ca-certificates/
+
 docker rmi -f roaming-terminal:$USER
  
 docker build \
   --build-arg USER_NAME=$USER \
   --build-arg USER_GID=$USER_GID \
   --build-arg USER_UID=$USER_UID \
+  --build-arg GH_TOKEN=$GH_TOKEN \
   --tag roaming-terminal:$USER .
