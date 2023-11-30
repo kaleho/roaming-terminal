@@ -21,19 +21,6 @@ for d in $HOME/*/
     VOLUMES+=" -v ${d%*/}:$CONTAINER_HOME/${dir##*/}"
 done
 
-# Create a pipe for sending commands back to the host using `remote`
-
-PIPE_ID=$RANDOM
-PIPE_PATH=$HOME/.roaming-pipe-$RANDOM
-
-mkfifo $PIPE_PATH
-
-while true; do eval "$(cat $PIPE_PATH)"; done &
-
-LOOP_PID=$!
-
-echo "Using roaming pipe: $PIPE_PATH"
-
 USER_MAP=""
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -95,7 +82,6 @@ elif [[ "$1" = 'start' ]]; then
   else
     eval "docker run -it -w $WORK_DIR \
       --name $NAME \
-      -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
       -v /etc/timezone:/etc/timezone:ro \
       -v /etc/localtime:/etc/localtime:ro \
       -v /var/run/docker.sock:/var/run/docker.sock \
@@ -128,7 +114,6 @@ else
 
   eval "docker run -it -w $WORK_DIR \
     --name $NAME \
-    -v $PIPE_PATH:$CONTAINER_HOME/.roaming-pipe \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -149,7 +134,3 @@ else
 
     #-v $HOME/.local:$CONTAINER_HOME/.local \
 fi
-
-kill $LOOP_PID
-
-rm $PIPE_PATH
