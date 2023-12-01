@@ -59,6 +59,7 @@ if [[ "$1" = 'init' ]]; then
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $HOME:$CONTAINER_HOME/.home \
     -v $HOME/.azure:$CONTAINER_HOME/.azure \
+    -v $HOME/.config:$CONTAINER_HOME/.config \
     -v $HOME/.kube:$CONTAINER_HOME/.kube \
     -v $HOME/.roaming-home:$CONTAINER_HOME/.roaming-home \
     -v $HOME/.ssh:$CONTAINER_HOME/.ssh \
@@ -87,6 +88,7 @@ elif [[ "$1" = 'start' ]]; then
       -v /var/run/docker.sock:/var/run/docker.sock \
       -v $HOME:$CONTAINER_HOME/.home \
       -v $HOME/.azure:$CONTAINER_HOME/.azure \
+      -v $HOME/.config:$CONTAINER_HOME/.config \
       -v $HOME/.kube:$CONTAINER_HOME/.kube \
       -v $HOME/.roaming-home/.cache:$CONTAINER_HOME/.cache \
       -v $HOME/.roaming-home/.oh-my-zsh:$CONTAINER_HOME/.oh-my-zsh \
@@ -119,6 +121,7 @@ else
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $HOME:$CONTAINER_HOME/.home \
     -v $HOME/.azure:$CONTAINER_HOME/.azure \
+    -v $HOME/.config:$CONTAINER_HOME/.config \
     -v $HOME/.kube:$CONTAINER_HOME/.kube \
     -v $HOME/.roaming-home/.cache:$CONTAINER_HOME/.cache \
     -v $HOME/.roaming-home/.oh-my-zsh:$CONTAINER_HOME/.oh-my-zsh \
