@@ -1,12 +1,12 @@
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NONINTERACTIVE_SEEN=true	
 
-FROM debian:bookworm-slim as base
+FROM ubuntu:jammy as base
 COPY install_packages_root.sh /tmp/
 
 # Import and merge any local CA certificates
-#RUN mkdir -p /usr/local/share/ca-certificates
-#COPY ca-certificates/* /usr/local/share/ca-certificates/
+RUN mkdir -p /usr/local/share/ca-certificates
+COPY ca-certificates/* /usr/local/share/ca-certificates/
 
 RUN /tmp/install_packages_root.sh
 

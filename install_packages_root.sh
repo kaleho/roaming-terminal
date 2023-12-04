@@ -40,26 +40,26 @@ apt update; \
     libzstd1
 
 # Install dependencies for Playwright
-apt update; \
-    apt install -y \
-    libglib2.0-0 \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libgbm-dev \
-    libgtk-3-0 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libasound2 \
-    libatspi2.0-0 \
-    libxshmfence1 \
-    libcups2 \
-    libdrm2 \
-    libpango-1.0-0 \
-    libcairo2
+# apt update; \
+#     apt install -y \
+#     libglib2.0-0 \
+#     libnss3 \
+#     libatk1.0-0 \
+#     libatk-bridge2.0-0 \
+#     libgbm-dev \
+#     libgtk-3-0 \
+#     libxkbcommon0 \
+#     libxcomposite1 \
+#     libxdamage1 \
+#     libxfixes3 \
+#     libxrandr2 \
+#     libasound2 \
+#     libatspi2.0-0 \
+#     libxshmfence1 \
+#     libcups2 \
+#     libdrm2 \
+#     libpango-1.0-0 \
+#     libcairo2
 
 # Update the CA certificates for any that were imported into the container
 update-ca-certificates
@@ -101,6 +101,6 @@ apt update; \
     terraform
 
 # Install wasm-tools for .NET
-dotnet workload install wasm-tools
+# dotnet workload install wasm-tools
 
 systemctl enable ssh
